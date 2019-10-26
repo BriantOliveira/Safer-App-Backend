@@ -19,3 +19,8 @@ PORT=8080
 SECRETKEY= [ADD ANY RANDOM KEY YOU WANT]
 ``` 
 ***
+
+3. Create your personal branch 
+```
+git checkout -b [BRANCH NAME]
+```
