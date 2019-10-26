@@ -1,7 +1,7 @@
 const logger = require('../services/logger');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
-const { convertFireAlertToRawData } = require('../services/breezeOfMeterAPI');
+const { convertFireAlertToRawData, convertAirQualityToRawData } = require('../services/breezeOfMeterAPI');
 const { respondWith } = require('../services/clientResponse');
 const { asyncHandler } = require('../services/asyncRouterHandler');
 
@@ -18,6 +18,14 @@ module.exports = function(app) {
     //   }
     //   return respondWith(res, 200, { data });
     // }));
+    app.get('/airquality', asyncHandler(async (req, res) => {
+      const data = await convertAirQualityToRawData();
+      if (data == undefined) {
+        logger.error(data);
+        return respondWith(res, 500, ['An error occured while getting data.']);
+      }
+      return respondWith(res, 200, { data });
+    }));
 
     app.get('/firealert', asyncHandler(async (req, res) => {
       const data = await convertFireAlertToRawData();
