@@ -35,6 +35,7 @@ app.use(expressSanitizer());
 app.use(methodOverride('_method'))
 
 /** Set up routes */
+const auth = require('./controllers/auth')(app);
 const breezeData = require('./controllers/breezeData')(app);
 
 /** Protected Routes */
