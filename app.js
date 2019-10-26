@@ -11,11 +11,10 @@ const sanitizer = require('sanitize');
 const expressSanitizer = require('express-sanitizer');
 const { limit } = require('./middlewares/rateLimiter');
 const methodOverride = require('method-override');
-
+const mongoose = require('mongoose');
 /** Instantiate the server */
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 const { verifyAuthentication, error, notFound } = require('./middlewares/handler');
 
 /** Import Routes */
