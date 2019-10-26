@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-console */
 /*
  * Safer-App main server
@@ -9,10 +10,25 @@ const compression = require('compression');
 const path = require('path');
 const sanitizer = require('sanitize');
 const expressSanitizer = require('express-sanitizer');
-const { limit } = require('./middlewares/rateLimiter');
+const MongoClient = require('mongodb').MongoClient;
+
 
 /** Import Routes */
+const { limit } = require('./middlewares/rateLimiter');
+/*
+This service manages our mongoClient connection, events relating to that connection,
+and other useful database related methods.
+*/
 
+const DATABASE_NAME = 'safer-db';
+
+const uri = encodeURI(`mongodb+srv://zni:${process.env.DBPASSWORD}@safer-cluster-ekvvi.azure.mongodb.net/test?retryWrites=true&w=majority`);
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+client.connect((err) => {
+  const collection = client.db(DATABASE_NAME).collection('devices');
+  // perform actions on the collection object
+  client.close();
+});
 
 /** Instantiate the server */
 const app = express();
@@ -48,4 +64,6 @@ app.use(Errors);
 
 app.listen(PORT, () => {
   console.log('Safer-App listening on port', PORT);
+  // eslint-disable-next-line no-undef
+  console.log(`Connected to ${DATABASE_NAME}!`);
 });
