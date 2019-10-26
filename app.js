@@ -18,7 +18,7 @@ const { limit } = require('./middlewares/rateLimiter');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const { verifyAuthentication, error, notFound } = require('./middlewares/handler');
+const { verifyAuthentication, Errors, notFound } = require('./middlewares/handler');
 
 /** Set up static public directory */
 app.use(express.static(path.join(__dirname, '..', 'public')));
@@ -43,7 +43,7 @@ app.use(verifyAuthentication);
 app.use(notFound);
 
 /** All errors will be sent here and displayed to the user in json format */
-app.use(error);
+app.use(Errors);
 
 
 app.listen(PORT, () => {

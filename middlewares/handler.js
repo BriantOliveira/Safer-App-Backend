@@ -14,7 +14,7 @@ const notFound = (req, res, next) => {
 /*
 *  Error Handler
 */
-const error = (error, req, res, next) => {
+const Errors = (error, req, res, next) => {
   res.status(res.statusCode || 500);
   res.json({
     error: error.message,
@@ -53,6 +53,6 @@ const verifyAuthentication = async (req, res, next) => {
 
 module.exports = {
   verifyAuthentication,
-  error,
+  Errors,
   notFound,
 };
