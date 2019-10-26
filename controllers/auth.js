@@ -17,9 +17,6 @@ module.exports = (app) => {
                 return res.status(400).send({ err: err });
             });
     });
-    app.get('/log-in', (req, res) => {
-        res.render('log-in');
-    });
     app.post('/log-in', (req, res) => {
         const username = req.body.username;
         const password = req.body.password;
