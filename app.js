@@ -10,15 +10,16 @@ const path = require('path');
 const sanitizer = require('sanitize');
 const expressSanitizer = require('express-sanitizer');
 const { limit } = require('./middlewares/rateLimiter');
-
-/** Import Routes */
-
+const methodOverride = require('method-override');
 
 /** Instantiate the server */
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const { verifyAuthentication, error, notFound } = require('./middlewares/handler');
+
+/** Import Routes */
+
 
 /** Set up static public directory */
 app.use(express.static(path.join(__dirname, '..', 'public')));
@@ -31,10 +32,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(sanitizer.middleware);
 app.use(expressSanitizer());
-
+app.use(methodOverride('_method'))
 
 /** Set up routes */
-
+const breezeData = require('./controllers/breezeData')(app);
 
 /** Protected Routes */
 app.use(verifyAuthentication);
@@ -49,3 +50,5 @@ app.use(error);
 app.listen(PORT, () => {
   console.log('Safer-App listening on port', PORT);
 });
+
+module.exports = app;

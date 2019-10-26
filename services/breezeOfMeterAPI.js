@@ -1,7 +1,7 @@
 const axios = require('axios');
-const logger = require('../services/logger');
+const logger = require('./logger');
 //features for air quality to use
-const features = {"health_recommendations", "dominant_pollutant_concentrations", "pollutants_concentrations", "pollutants_aqi_information"};
+const features = "health_recommendations, dominant_pollutant_concentrations, pollutants_concentrations, pollutants_aqi_information"
 let lat = "37.871593"; //will later pass in latitue and longitude gotten from user location
 let long = "-122.272743"; //use these for Berkeley
 // let lat = "38.521120" //will later pass in latitue and longitude gotten from user location
@@ -44,4 +44,4 @@ const convertAirQualityToRawData = async (url) => {
   }
 };
 
-module.exports = { breezeOfMeterAPI };
+module.exports = { convertFireAlertToRawData, convertAirQualityToRawData };
