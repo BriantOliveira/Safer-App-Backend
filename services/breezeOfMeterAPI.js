@@ -46,5 +46,46 @@ const convertAirQualityToRawData = async () => {
   }
 };
 
+const FindFireAlertToRawData = async (lat1, long2) => {
+  logger.info('Coverting data from api.');
+  try {
+    const response = await axios.get(`${BreezeURI}/fires/v1/current-conditions?lat=${lat1}&lon=${long2}&key=${process.env.APIKEY}`, {
+      refresh: false,
+      incognito: false,
+      ipAddress: '32.4.2.223',
+      language: 'en',
+    });
 
-module.exports = { convertFireAlertToRawData, convertAirQualityToRawData };
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    // logger.error(error);
+    return undefined;
+  }
+};
+
+const FindAirQualityToRawData = async (lat2, long2) => {
+  logger.info('Coverting data from api.');
+  try {
+    const response = await axios.get(`${BreezeURI}/air-quality/v2/current-conditions?lat=${lat2}&lon=${long2}&features=${features}&key=${process.env.APIKEY}`, {
+      // headers: { 'features': features },
+      refresh: false,
+      incognito: false,
+      ipAddress: '32.4.2.223',
+      language: 'en',
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    // logger.error(error);
+    return undefined;
+  }
+};
+
+module.exports = {
+  convertFireAlertToRawData,
+  convertAirQualityToRawData,
+  FindFireAlertToRawData,
+  FindAirQualityToRawData,
+};
