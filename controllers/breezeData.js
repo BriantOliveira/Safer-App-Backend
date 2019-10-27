@@ -1,38 +1,28 @@
+/* eslint-disable func-names */
+const { Router } = require('express');
 const logger = require('../services/logger');
-const methodOverride = require('method-override');
-const bodyParser = require('body-parser');
 const { convertFireAlertToRawData, convertAirQualityToRawData } = require('../services/breezeOfMeterAPI');
 const { respondWith } = require('../services/clientResponse');
 const { asyncHandler } = require('../services/asyncRouterHandler');
 
-module.exports = function(app) {
-    // app.use(methodOverride('_method'));
-    // app.use(bodyParser.urlencoded({ extended: true }));
+const router = Router();
 
-    // app.get('/airquality', asyncHandler(async (req, res) => {
-    //   const data = await convertFireAlertToRawData();
-    //   if (!data) {
-    //     // logger.error(data);
-    //     console.log(data)
-    //     return respondWith(res, 500, ['An error occured while getting data.']);
-    //   }
-    //   return respondWith(res, 200, { data });
-    // }));
-    app.get('/airquality', asyncHandler(async (req, res) => {
-      const data = await convertAirQualityToRawData();
-      if (data == undefined) {
-        logger.error(data);
-        return respondWith(res, 500, ['An error occured while getting data.']);
-      }
-      return respondWith(res, 200, { data });
-    }));
+router.get('/airquality', asyncHandler(async (req, res) => {
+  const data = await convertAirQualityToRawData();
+  if (data === undefined) {
+    logger.error(data);
+    return respondWith(res, 500, ['An error occured while getting data.']);
+  }
+  return respondWith(res, 200, { data });
+}));
 
-    app.get('/firealert', asyncHandler(async (req, res) => {
-      const data = await convertFireAlertToRawData();
-      if (data == undefined) {
-        logger.error(data);
-        return respondWith(res, 500, ['An error occured while getting data.']);
-      }
-      return respondWith(res, 200, { data });
-    }));
-};
+router.get('/firealert', asyncHandler(async (req, res) => {
+  const data = await convertFireAlertToRawData();
+  if (data === undefined) {
+    logger.error(data);
+    return respondWith(res, 500, ['An error occured while getting data.']);
+  }
+  return respondWith(res, 200, { data });
+}));
+
+module.exports = router;
