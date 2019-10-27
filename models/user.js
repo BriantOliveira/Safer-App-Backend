@@ -4,7 +4,7 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 const User = new Schema({
   createdAt: { type: Date },
