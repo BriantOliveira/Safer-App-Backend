@@ -5,12 +5,6 @@ const logger = require('./logger');
 const features = ['health_recommendations', 'dominant_pollutant_concentrations', 'pollutants_concentrations', 'pollutants_aqi_information'];
 const lat = '37.871593'; // will later pass in latitue and longitude gotten from user location
 const long = '-122.272743'; // use these for Berkeley
-// let lat = "38.521120" //will later pass in latitue and longitude gotten from user location
-// let long = "-122.812060" //use these for getting a current fire
-// get current fire alerts
-
-
-// axios.get('https://api.breezometer.com/fires/v1/current-conditions?lat=38.521120&lon=-122.812060&key=3e8fb9e213d949d8b66eba36dffb7e2e', {
 
 const BreezeURI = 'https://api.breezometer.com';
 
@@ -52,19 +46,5 @@ const convertAirQualityToRawData = async () => {
   }
 };
 
-
-// const convertAirQualityToRawData = async (url) => {
-//   logger.info('Coverting data from api.');
-//   try {
-//     const response = await getBreezeData.get('/air-quality/v2/current-conditions', {
-//       url,
-//       headers: { 'features': features },
-//     });
-//     return response.data;
-//   } catch (error) {
-//     logger.error(error);
-//     return undefined;
-//   }
-// };
 
 module.exports = { convertFireAlertToRawData, convertAirQualityToRawData };

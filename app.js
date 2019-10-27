@@ -16,21 +16,13 @@ const mongoose = require('mongoose');
 /** Import Routes */
 const { limit } = require('./middlewares/rateLimiter');
 const nasaRouter = require('./controllers/nasaController');
-// const { client, DATABASE_NAME } = require('./config/db');
 const breezeData = require('./controllers/breezeData');
 const authRouter = require('./controllers/auth');
 
 
-// const { verifyAuthentication, error, notFound } = require('./middlewares/handler');
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/Safer-db', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(`mongodb://elliot:${process.env.DBPASSWORD}@ds239858.mlab.com:39858/safer-app` || 'mongodb://localhost/Safer-db', { useNewUrlParser: true, useUnifiedTopology: true });
 console.log('You are connected to the db');
-
-// client.connect((err) => {
-//   // const collection = client.db(DATABASE_NAME).collection('devices');
-//   // perform actions on the collection object
-//   client.close();
-// });
 
 /** Instantiate the server */
 const app = express();
@@ -56,18 +48,6 @@ app.use('/api', breezeData);
 app.use('/api', authRouter);
 
 
-/** Protected Routes */
-// app.use(verifyAuthentication);
-
-/**  If no routes found then send to notFoundHandler */
-// app.use(notFound);
-
-/** All errors will be sent here and displayed to the user in json format */
-// app.use(Errors);
-
-
 app.listen(PORT, () => {
   console.log('Safer-App listening on port', PORT);
-  // eslint-disable-next-line no-undef
-  // console.log(`Connected to ${DATABASE_NAME}!`);
 });
