@@ -11,6 +11,7 @@ and other useful database related methods.
 const DATABASE_NAME = 'safer-db';
 
 const uri = `mongodb://elliot:<dbpassword>@ds239858.mlab.com:39858/safer-app`;
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, reconnectInterval: 500 });
 
 
