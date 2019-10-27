@@ -10,22 +10,15 @@ const compression = require('compression');
 const path = require('path');
 const sanitizer = require('sanitize');
 const expressSanitizer = require('express-sanitizer');
-const MongoClient = require('mongodb').MongoClient;
-
 
 /** Import Routes */
 const { limit } = require('./middlewares/rateLimiter');
-/*
-This service manages our mongoClient connection, events relating to that connection,
-and other useful database related methods.
-*/
+const nasaRouter = require('./controllers/nasaController');
+const { client, DATABASE_NAME } = require('./config/db');
 
-const DATABASE_NAME = 'safer-db';
 
-const uri = encodeURI(`mongodb+srv://zni:${process.env.DBPASSWORD}@safer-cluster-ekvvi.azure.mongodb.net/test?retryWrites=true&w=majority`);
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect((err) => {
-  const collection = client.db(DATABASE_NAME).collection('devices');
+  // const collection = client.db(DATABASE_NAME).collection('devices');
   // perform actions on the collection object
   client.close();
 });
@@ -34,7 +27,8 @@ client.connect((err) => {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const { verifyAuthentication, Errors, notFound } = require('./middlewares/handler');
+
+// const { verifyAuthentication, Errors, notFound } = require('./middlewares/handler');
 
 /** Set up static public directory */
 app.use(express.static(path.join(__dirname, '..', 'public')));
@@ -50,16 +44,16 @@ app.use(expressSanitizer());
 
 
 /** Set up routes */
-
+app.use('/api', nasaRouter);
 
 /** Protected Routes */
-app.use(verifyAuthentication);
+// app.use(verifyAuthentication);
 
 /**  If no routes found then send to notFoundHandler */
-app.use(notFound);
+// app.use(notFound);
 
 /** All errors will be sent here and displayed to the user in json format */
-app.use(Errors);
+// app.use(Errors);
 
 
 app.listen(PORT, () => {

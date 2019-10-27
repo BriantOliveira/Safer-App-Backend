@@ -1,15 +1,19 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable max-len */
 /*
 *  NASA's EONET API SERVICES
 */
 
 const axios = require('axios');
+/* eslint-disable no-console */
+// eslint-disable-next-line import/order
+const { client, DATABASE_NAME } = require('../config/db');
 const logger = require('../services/logger');
-
+const { respondWith } = require('../services/clientResponse');
+const Event = require('../models/events');
 /** Creating reference to NASA's API */
-const nasaAPI = axios.create({
-  baseURL: 'https://eonet.sci.gsfc.nasa.gov',
-});
+// const baseURL = 'https://eonet.sci.gsfc.nasa.gov';
 
 /**
  * Collect all the catastrophes events at the specified url into data that can be used
@@ -25,11 +29,10 @@ const nasaAPI = axios.create({
  * @return {geometries} One or more event geometries are the pairing of a specific date/time with a location.
  * @return {closed} An event is deemed “closed” when it has ended.
  */
-const getAllEventsData = async (url) => {
+const getAllEventsData = async () => {
   logger.info('Collecting all of the satellite data.');
   try {
-    const response = await nasaAPI.get('/api/v2.1/events', {
-      url,
+    const response = await axios.get('https://eonet.sci.gsfc.nasa.gov/api/v2.1/events', {
       headers: { 'x-custom-key': 'string' },
       refresh: false,
       incognito: false,
@@ -58,11 +61,10 @@ const getAllEventsData = async (url) => {
  * @return {geometries} One or more event geometries are the pairing of a specific date/time with a location.
  * @return {closed} An event is deemed “closed” when it has ended.
  */
-const getAllEndedEvents = async (url) => {
+const getAllEndedEvents = async () => {
   logger.info('Collecting all of the satellite data.');
   try {
     const response = await nasaAPI.get('/api/v2.1/events?status=closed', {
-      url,
       headers: { 'x-custom-key': 'string' },
       refresh: false,
       incognito: false,
@@ -76,8 +78,60 @@ const getAllEndedEvents = async (url) => {
   }
 };
 
+/**
+ * Process the raw data returned from NASA's API into
+ * data that can be used to create models in the database
+ * @param {JSON} rawData the raw data returned from the API to be processed
+ * @return An Object containing the processed data climate data
+ */
+// TODO: COME BACK ON THIS FUNCTION
+const processRawData = (rawData) => {
+  logger.info('Processing raw data into usable data...');
+
+  /** Process item data */
+  const EventDataArray = rawData.events.map((item) => {
+    try {
+      const eventValues = {
+        eventId: item.id,
+        title: item.title,
+        link: item.link,
+        categoryNumber: item.categories[0].id,
+        categoryName: item.categories[0].title,
+        sources: item.sources,
+        date: item.geometries[0].date,
+        geometriesType: item.geometries[0].type,
+        coordinates: item.geometries[0].coordinates,
+      };
+      return eventValues;
+    } catch (err) {
+      logger.error(err);
+      return undefined;
+    }
+  });
+  return EventDataArray;
+};
+
+
+const storeClimateData = async () => {
+  try {
+    /** Process the data */
+    const climateRawData = await getAllEventsData();
+    const eventData = await processRawData(climateRawData);
+
+    // console.log(eventData);
+    // const StoreData = await Event.save(eventData);
+
+    // save into the db
+    return eventData;
+  } catch (err) {
+    logger.error(err);
+    return err;
+  }
+};
+
 
 module.exports = {
+  storeClimateData,
   getAllEventsData,
   getAllEndedEvents,
 };
