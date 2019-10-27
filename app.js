@@ -11,11 +11,14 @@ const path = require('path');
 const sanitizer = require('sanitize');
 const expressSanitizer = require('express-sanitizer');
 
+
 /** Import Routes */
 const { limit } = require('./middlewares/rateLimiter');
 const nasaRouter = require('./controllers/nasaController');
 const { client, DATABASE_NAME } = require('./config/db');
-
+const methodOverride = require('method-override');
+const mongoose = require('mongoose');
+// const { verifyAuthentication, error, notFound } = require('./middlewares/handler');
 
 client.connect((err) => {
   // const collection = client.db(DATABASE_NAME).collection('devices');
@@ -28,8 +31,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
-// const { verifyAuthentication, Errors, notFound } = require('./middlewares/handler');
-
 /** Set up static public directory */
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
@@ -41,10 +42,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(sanitizer.middleware);
 app.use(expressSanitizer());
-
+app.use(methodOverride('_method'))
 
 /** Set up routes */
 app.use('/api', nasaRouter);
+const auth = require('./controllers/auth')(app);
+const breezeData = require('./controllers/breezeData')(app);
 
 /** Protected Routes */
 // app.use(verifyAuthentication);
@@ -61,3 +64,5 @@ app.listen(PORT, () => {
   // eslint-disable-next-line no-undef
   console.log(`Connected to ${DATABASE_NAME}!`);
 });
+
+module.exports = app;
